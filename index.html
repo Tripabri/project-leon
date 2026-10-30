@@ -1,76 +1,246 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Project Leon</title>
-    <style>
-      :root {
-        --bg: #0f172a;
-        --panel: #111827;
-        --text: #e5e7eb;
-        --muted: #94a3b8;
-        --accent: #38bdf8;
-      }
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>? – watch and play together</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080a14;
+    --panel: #10132a;
+    --line: rgba(120, 140, 255, .22);
+    --text: #e8ebff;
+    --muted: #9aa3d6;
+    --cyan: #3ef2ff;
+    --violet: #8b5cff;
+    --pink: #ff4fd8;
+    --font: "Space Grotesk", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0; font-family: var(--font); color: var(--text); line-height: 1.55;
+    background:
+      radial-gradient(900px 500px at 85% -5%, rgba(139,92,255,.30), transparent 60%),
+      radial-gradient(700px 450px at 5% 30%, rgba(62,242,255,.12), transparent 60%),
+      var(--bg);
+  }
+  a { color: inherit; }
+  :focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 0 24px; }
 
-      * {
-        box-sizing: border-box;
-      }
+  header { display: flex; justify-content: space-between; align-items: center; padding: 22px 0; gap: 16px; }
+  .logo { font-weight: 700; font-size: 30px; text-decoration: none; color: var(--cyan); text-shadow: 0 0 18px rgba(62,242,255,.7); }
+  .right { display: flex; align-items: center; gap: 22px; }
+  nav a { margin-left: 22px; text-decoration: none; color: var(--muted); font-weight: 500; }
+  nav a:first-child { margin-left: 0; }
+  nav a:hover { color: var(--text); }
+  .lang { display: flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .lang button {
+    font: 700 14px var(--font); color: var(--muted); background: transparent;
+    border: 0; padding: 7px 12px; cursor: pointer;
+  }
+  .lang button[aria-pressed="true"] { color: #05060d; background: var(--cyan); }
 
-      body {
-        margin: 0;
-        font-family: Arial, Helvetica, sans-serif;
-        background: linear-gradient(135deg, var(--bg), #1e293b);
-        color: var(--text);
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-      }
+  .hero { display: grid; grid-template-columns: 1.05fr 1fr; gap: 48px; align-items: center; padding: 48px 0 88px; }
+  .hero h1 { font-size: clamp(38px, 6vw, 66px); line-height: 1.04; margin: 0 0 20px; font-weight: 700; letter-spacing: -0.03em; }
+  .glow {
+    background: linear-gradient(90deg, var(--cyan), var(--violet) 60%, var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero p { font-size: 20px; color: var(--muted); max-width: 34ch; margin: 0 0 30px; }
+  .btn {
+    display: inline-block; color: #05060d; font: 700 17px var(--font); text-decoration: none;
+    background: linear-gradient(90deg, var(--cyan), var(--violet)); border: 0; cursor: pointer;
+    padding: 14px 26px; border-radius: 12px; box-shadow: 0 0 28px rgba(139,92,255,.45);
+  }
+  .btn:hover { box-shadow: 0 0 40px rgba(62,242,255,.55); }
 
-      .card {
-        width: min(90vw, 760px);
-        background: rgba(17, 24, 39, 0.9);
-        border: 1px solid rgba(148, 163, 184, 0.2);
-        border-radius: 18px;
-        padding: 48px 32px;
-        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.5);
-        text-align: center;
-      }
+  .room {
+    background: rgba(16,19,42,.8); border: 1px solid var(--line); border-radius: 20px;
+    padding: 16px; box-shadow: 0 0 60px rgba(139,92,255,.25);
+  }
+  .tabs { display: flex; gap: 8px; margin-bottom: 14px; }
+  .tabs button {
+    font: 500 15px var(--font); color: var(--muted); background: transparent;
+    border: 1px solid var(--line); border-radius: 10px; padding: 7px 16px; cursor: pointer;
+  }
+  .tabs button[aria-pressed="true"] { color: var(--cyan); border-color: var(--cyan); box-shadow: 0 0 14px rgba(62,242,255,.35); }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .tile {
+    aspect-ratio: 4/3; border-radius: 12px; display: grid; place-items: center;
+    font-weight: 700; font-size: 32px; color: #fff; border: 1px solid var(--line);
+  }
+  .t1 { background: linear-gradient(135deg, #1a2cff55, #3ef2ff33); }
+  .t2 { background: linear-gradient(135deg, #8b5cff66, #ff4fd833); }
+  .t3 { background: linear-gradient(135deg, #00d4a355, #3ef2ff22); }
+  .t4 { background: linear-gradient(135deg, #ff4fd855, #8b5cff33); }
+  .status { margin: 14px 4px 2px; font-size: 15px; color: var(--muted); min-height: 1.5em; }
+  .status::before { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #35f08a; box-shadow: 0 0 10px #35f08a; margin-right: 8px; }
 
-      h1 {
-        margin: 0 0 16px;
-        font-size: clamp(2rem, 4vw, 4rem);
-      }
+  .features { padding: 24px 0 80px; }
+  .features .wrap { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 20px; padding: 32px; }
+  .card h2 { font-size: 28px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.01em; }
+  .card p { margin: 0; color: var(--muted); font-size: 18px; max-width: 38ch; }
+  .card:first-child { border-color: rgba(62,242,255,.4); }
+  .card:last-child { border-color: rgba(255,79,216,.4); }
 
-      p {
-        color: var(--muted);
-        font-size: 1.05rem;
-        line-height: 1.6;
-        margin: 0 auto 24px;
-        max-width: 600px;
-      }
+  .join { padding: 48px 0 24px; text-align: center; }
+  .join h2 { font-size: clamp(30px, 5vw, 48px); margin: 0 0 12px; letter-spacing: -0.02em; }
+  .join p { margin: 0 auto 26px; max-width: 40ch; color: var(--muted); }
+  footer { padding: 40px 0; text-align: center; font-size: 14px; color: var(--muted); }
 
-      .tag {
-        display: inline-block;
-        margin-top: 12px;
-        padding: 10px 18px;
-        border-radius: 999px;
-        background: rgba(56, 189, 248, 0.15);
-        border: 1px solid rgba(56, 189, 248, 0.4);
-        color: var(--accent);
-        font-weight: bold;
-        letter-spacing: 0.04em;
-      }
-    </style>
-  </head>
-  <body>
-    <main class="card">
-      <h1>Project Leon</h1>
-      <p>
-        This page is ready to be published with GitHub Pages. Upload it to the repository root
-        and enable GitHub Pages in the repository settings.
-      </p>
-      <div class="tag">GitHub Pages Ready</div>
-    </main>
-  </body>
+  @media (max-width: 760px) {
+    .hero, .features .wrap { grid-template-columns: 1fr; }
+    .hero { padding-bottom: 48px; }
+    nav { display: none; }
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .q { display: inline-block; animation: pulse 3s ease-in-out infinite; }
+    @keyframes pulse { 0%,100% { filter: drop-shadow(0 0 6px rgba(62,242,255,.4)); } 50% { filter: drop-shadow(0 0 22px rgba(255,79,216,.8)); } }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="#">?</a>
+    <div class="right">
+      <nav>
+        <a href="#about" data-i18n="nav_about">What it is</a>
+        <a href="#join" data-i18n="nav_join">Join</a>
+      </nav>
+      <div class="lang" role="group" aria-label="Language / Langue">
+        <button type="button" data-lang="en" aria-pressed="true" lang="en">EN</button>
+        <button type="button" data-lang="fr" aria-pressed="false" lang="fr">FR</button>
+      </div>
+    </div>
+  </header>
+
+  <section class="hero">
+    <div>
+      <h1><span data-i18n="h1">Watch together. Play together.</span> <span class="q glow">?</span></h1>
+      <p data-i18n="lead">Open a room, send the link, and your group is in. Video and games, side by side.</p>
+      <a class="btn" href="#join" data-i18n="cta">Get early access</a>
+    </div>
+
+    <div class="room">
+      <div class="tabs">
+        <button type="button" data-mode="watch" aria-pressed="true" data-i18n="tab_watch">Watch</button>
+        <button type="button" data-mode="play" aria-pressed="false" data-i18n="tab_play">Play</button>
+      </div>
+      <div class="grid" aria-hidden="true">
+        <div class="tile t1">A</div><div class="tile t2">B</div>
+        <div class="tile t3">C</div><div class="tile t4">D</div>
+      </div>
+      <p class="status" id="status" aria-live="polite"></p>
+    </div>
+  </section>
+</div>
+
+<section class="features" id="about">
+  <div class="wrap">
+    <div class="card">
+      <h2 data-i18n="f1_title">Group video streaming</h2>
+      <p data-i18n="f1_text">Everyone sees the same moment at the same time. Pause once and it pauses for the whole room.</p>
+    </div>
+    <div class="card">
+      <h2 data-i18n="f2_title">Group games</h2>
+      <p data-i18n="f2_text">Quick games you can start in seconds, with no downloads. Pick one, invite the room, and play.</p>
+    </div>
+  </div>
+</section>
+
+<section class="join" id="join">
+  <div class="wrap">
+    <h2 data-i18n="join_title">We’re building this now.</h2>
+    <p data-i18n="join_text">This is a test page. Sign-up will appear here soon.</p>
+    <a class="btn" href="mailto:hello@example.com" data-i18n="join_btn">Tell me when it’s ready</a>
+  </div>
+  <footer data-i18n="footer">Test page hosted on GitHub Pages</footer>
+</section>
+
+<script>
+  var T = {
+    en: {
+      title: "? – watch and play together",
+      nav_about: "What it is", nav_join: "Join",
+      h1: "Watch together. Play together.",
+      lead: "Open a room, send the link, and your group is in. Video and games, side by side.",
+      cta: "Get early access",
+      tab_watch: "Watch", tab_play: "Play",
+      status_watch: "4 friends are watching in sync.",
+      status_play: "4 friends are playing a game.",
+      f1_title: "Group video streaming",
+      f1_text: "Everyone sees the same moment at the same time. Pause once and it pauses for the whole room.",
+      f2_title: "Group games",
+      f2_text: "Quick games you can start in seconds, with no downloads. Pick one, invite the room, and play.",
+      join_title: "We’re building this now.",
+      join_text: "This is a test page. Sign-up will appear here soon.",
+      join_btn: "Tell me when it’s ready",
+      footer: "Test page hosted on GitHub Pages"
+    },
+    fr: {
+      title: "? – regardez et jouez ensemble",
+      nav_about: "Le concept", nav_join: "Rejoindre",
+      h1: "Regardez ensemble. Jouez ensemble.",
+      lead: "Ouvrez un salon, envoyez le lien, et votre groupe est là. Vidéo et jeux, côte à côte.",
+      cta: "Accès anticipé",
+      tab_watch: "Regarder", tab_play: "Jouer",
+      status_watch: "4 amis regardent en synchro.",
+      status_play: "4 amis jouent à un jeu.",
+      f1_title: "Streaming vidéo de groupe",
+      f1_text: "Tout le monde voit le même moment au même instant. Une pause, et c’est en pause pour tout le salon.",
+      f2_title: "Jeux de groupe",
+      f2_text: "Des jeux rapides à lancer en quelques secondes, sans téléchargement. Choisissez-en un, invitez le salon et jouez.",
+      join_title: "Nous construisons tout ça en ce moment.",
+      join_text: "Ceci est une page de test. L’inscription arrivera bientôt ici.",
+      join_btn: "Prévenez-moi quand c’est prêt",
+      footer: "Page de test hébergée sur GitHub Pages"
+    }
+  };
+
+  var lang = "en", mode = "watch";
+  var statusEl = document.getElementById("status");
+
+  function render() {
+    var d = T[lang];
+    document.documentElement.lang = lang;
+    document.title = d.title;
+    document.querySelectorAll("[data-i18n]").forEach(function (el) {
+      el.textContent = d[el.dataset.i18n];
+    });
+    statusEl.textContent = d["status_" + mode];
+    document.querySelectorAll(".lang button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.lang === lang ? "true" : "false");
+    });
+    document.querySelectorAll(".tabs button").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.dataset.mode === mode ? "true" : "false");
+    });
+  }
+
+  document.querySelectorAll(".lang button").forEach(function (b) {
+    b.addEventListener("click", function () {
+      lang = b.dataset.lang;
+      try { localStorage.setItem("lang", lang); } catch (e) {}
+      render();
+    });
+  });
+  document.querySelectorAll(".tabs button").forEach(function (b) {
+    b.addEventListener("click", function () { mode = b.dataset.mode; render(); });
+  });
+
+  try {
+    var saved = localStorage.getItem("lang");
+    if (saved === "fr" || saved === "en") lang = saved;
+    else if ((navigator.language || "").toLowerCase().indexOf("fr") === 0) lang = "fr";
+  } catch (e) {}
+  render();
+</script>
+</body>
 </html>
+
